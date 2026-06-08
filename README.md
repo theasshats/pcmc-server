@@ -40,6 +40,32 @@ The first start installs NeoForge, downloads the pack's mods, and generates the
 world — allow several minutes. Follow along with `docker compose logs -f`; the
 server is ready when the log shows `Done (…)! For help, type "help"`.
 
+## Connecting
+
+Players join at **`dpx.ishimura.xyz`** — no port required. Two DNS records on the
+`ishimura.xyz` zone make that work:
+
+| Type  | Name                  | Value                                                            |
+|-------|-----------------------|------------------------------------------------------------------|
+| `A`   | `dpx`                 | the host's public IP                                             |
+| `SRV` | `_minecraft._tcp.dpx` | priority `0`, weight `5`, port `25568`, target `dpx.ishimura.xyz` |
+
+The `A` record points the name at the host; the `SRV` record advertises port
+25568 so players don't have to type `:25568` (they still can, as
+`dpx.ishimura.xyz:25568`, if the SRV lookup is unavailable). As a raw zone line:
+
+```
+_minecraft._tcp.dpx  IN SRV  0 5 25568  dpx.ishimura.xyz.
+```
+
+Then forward both ports from the router to the host:
+
+- **TCP 25568** — the game.
+- **UDP 25568** — Simple Voice Chat (the pack's voice server listens here).
+
+If the host's public IP changes — as most home connections do — keep the `A`
+record current with a dynamic-DNS updater rather than a hard-coded address.
+
 ## Updating
 
 Run `./auto-update.sh` to apply any new version of the pack. It announces the
@@ -82,7 +108,8 @@ In `.env` (operator settings):
 
 In `docker-compose.yml`:
 
-- The published port — the host side of `25568:25565` (change the left value).
+- The published ports — `25568:25565` (game, TCP) and `25568:25568/udp` (Simple
+  Voice Chat). Change the host side (left value) if 25568 is already in use.
 - `INIT_MEMORY`, `MAX_MEMORY` — heap size.
 - `DIFFICULTY`, `VIEW_DISTANCE`, and the full range of
   [itzg/minecraft-server](https://docker-minecraft-server.readthedocs.io/)

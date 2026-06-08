@@ -5,7 +5,11 @@ services:
     tty: true
     stdin_open: true
     ports:
+      # Java edition (TCP): host 25568 -> container 25565.
       - "25568:25565"
+      # Simple Voice Chat (UDP): the pack's voice server is set to 25568, so the
+      # same host port is published for UDP. Forward UDP 25568 on the router too.
+      - "25568:25568/udp"
     environment:
       - EULA=TRUE
       - PUID=1000
