@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Derpack X server auto-update for the ishimura box.
+# Derpack X server auto-update.
 #
 # WHAT CHANGED AND WHY
 # --------------------
@@ -33,9 +33,8 @@
 #   release  - track the latest published GitHub release tag vX.Y.Z (production)
 #   branch   - track the tip of BRANCH_REF, e.g. v0.7.0 (dev / playtest)
 #
-# CRON (xela's crontab) - frequent is fine; it's a no-op unless the tracked
-# commit moved:
-#   */15 * * * * /home/Minecraft/Derpack-X/auto-update.sh >> /home/Minecraft/Derpack-X/auto-update.log 2>&1
+# CRON - frequent is fine; it's a no-op unless the tracked commit moved:
+#   */15 * * * * /path/to/derpack-server/auto-update.sh >> /path/to/derpack-server/auto-update.log 2>&1
 #
 # MANUAL
 #   ./auto-update.sh [--now] [--channel release|branch] [--branch <name>]
@@ -43,16 +42,22 @@
 #   --channel/-c     override CHANNEL for this run
 #   --branch         shorthand for --channel branch --branch <name>
 #
-# PAUSE / RESUME
-#   touch /home/Minecraft/Derpack-X/.pause-auto-update
-#   rm    /home/Minecraft/Derpack-X/.pause-auto-update
+# PAUSE / RESUME (run from this repo's directory)
+#   touch .pause-auto-update
+#   rm    .pause-auto-update
 
 set -euo pipefail
 
 # --- Static config ----------------------------------------------------------
 
-readonly REPO="derpack-org/Derpack-X"          # canonical owner (NOT Xela112233)
-readonly PACK_DIR="/home/Minecraft/Derpack-X"
+readonly REPO="derpack-org/Derpack-X"          # the Derpack X pack repo this server tracks
+
+# PACK_DIR is this script's own checkout, resolved from its location - so the
+# script reads .env, the lock and the pause flag, and runs compose, from
+# wherever you cloned the repo. Declare then mark readonly so the command
+# substitution's exit status isn't masked (ShellCheck SC2155).
+PACK_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly PACK_DIR
 readonly ENV_FILE="${PACK_DIR}/.env"
 readonly PAUSE_FILE="${PACK_DIR}/.pause-auto-update"
 readonly LOCK_FILE="${PACK_DIR}/.auto-update.lock"
