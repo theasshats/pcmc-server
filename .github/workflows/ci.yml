@@ -1,0 +1,27 @@
+name: CI
+
+# Lint-only CI: no network calls, no deploy, no running server.
+# It checks that the compose file is structurally valid and that the deploy
+# script passes ShellCheck. GitHub's ubuntu runners ship both shellcheck and
+# the docker compose plugin, so no extra setup is needed.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck auto-update.sh
+        run: shellcheck -x auto-update.sh
+
+      - name: Validate docker-compose.yml
+        # --env-file keeps compose from erroring on the operator-supplied vars;
+        # -q validates the merged config and prints nothing on success.
+        run: docker compose --env-file .env.example config -q

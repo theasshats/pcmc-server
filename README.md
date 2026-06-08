@@ -8,7 +8,8 @@ loader and mods pinned to a single, consistent version of the pack.
 ## Requirements
 
 - A Linux host with Docker and the Docker Compose plugin.
-- Outbound internet access — mods are downloaded from Modrinth and CurseForge on
+- Outbound internet access — `auto-update.sh` queries GitHub to resolve the
+  pinned commit, and the pack's mods download from Modrinth and CurseForge on
   first start.
 - Memory for a large modpack. The defaults request a fixed 32 GB heap; lower
   `INIT_MEMORY` / `MAX_MEMORY` in `docker-compose.yml` to suit your host (8 GB is
@@ -52,8 +53,9 @@ To keep the server current automatically, add it to cron:
 */15 * * * * /path/to/derpack-server/auto-update.sh >> /path/to/derpack-server/auto-update.log 2>&1
 ```
 
-Pause automatic updates with `touch .pause-auto-update`; resume by deleting that
-file.
+Pause automatic updates with `touch .pause-auto-update` in the repo directory;
+resume by deleting that file. The script runs from its own checkout, so you can
+clone it anywhere and the cron entry, lock, and pause flag all follow.
 
 ## Channels
 
@@ -93,5 +95,10 @@ not be edited by hand.
 
 - The server runs on Generational ZGC with a fixed heap (Java 21).
 - Shaders are a client-side option and have no effect on the server.
-- This configuration is maintained in the
-  [Derpack X](https://github.com/derpack-org/Derpack-X) pack repository.
+- The modpack this deploys — and the NeoForge version it pins — lives in the
+  [Derpack X](https://github.com/derpack-org/Derpack-X) repository. This repo is
+  only the deploy configuration; it mirrors the pack and never changes it.
+
+## License
+
+[MIT](LICENSE).
