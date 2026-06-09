@@ -1,6 +1,6 @@
-# Derpack X — Server
+# Project Commonwealth — Server
 
-Deploy configuration for running a [Derpack X](https://github.com/derpack-org/Derpack-X)
+Deploy configuration for running a [Project Commonwealth](https://github.com/theasshats/project-commonwealth)
 server. It pairs a Docker Compose stack (NeoForge 1.21.1, via the
 `itzg/minecraft-server` image) with an update script that keeps the server's
 loader and mods pinned to a single, consistent version of the pack.
@@ -20,15 +20,15 @@ Java is supplied by the container image — you do not install it yourself.
 ## Quick start
 
 ```bash
-git clone https://github.com/derpack-org/derpack-server.git
-cd derpack-server
+git clone https://github.com/theasshats/pcmc-server.git
+cd pcmc-server
 cp .env.example .env
 ```
 
 Edit `.env`: set `WHITELIST` and `OPS` to the players who may join and who should
 be operators (comma-separated), and set `RCON_PASSWORD` to a value of your own
 (for example `openssl rand -hex 24`). The defaults track the latest stable
-Derpack X release.
+Project Commonwealth release.
 
 Start the server:
 
@@ -50,7 +50,7 @@ skip the announcement countdown.
 To keep the server current automatically, add it to cron:
 
 ```cron
-*/15 * * * * /path/to/derpack-server/auto-update.sh >> /path/to/derpack-server/auto-update.log 2>&1
+*/15 * * * * /path/to/pcmc-server/auto-update.sh >> /path/to/pcmc-server/auto-update.log 2>&1
 ```
 
 Pause automatic updates with `touch .pause-auto-update` in the repo directory;
@@ -61,7 +61,7 @@ clone it anywhere and the cron entry, lock, and pause flag all follow.
 
 Set in `.env`:
 
-- `CHANNEL=release` — track the latest published Derpack X release. Recommended
+- `CHANNEL=release` — track the latest published Project Commonwealth release. Recommended
   for normal play.
 - `CHANNEL=branch` with `BRANCH_REF=<branch>` — track a development branch, for
   playtesting an upcoming version.
@@ -96,7 +96,7 @@ not be edited by hand.
 - The server runs on Generational ZGC with a fixed heap (Java 21).
 - Shaders are a client-side option and have no effect on the server.
 - The modpack this deploys — and the NeoForge version it pins — lives in the
-  [Derpack X](https://github.com/derpack-org/Derpack-X) repository. This repo is
+  [Project Commonwealth](https://github.com/theasshats/project-commonwealth) repository. This repo is
   only the deploy configuration; it mirrors the pack and never changes it.
 
 ## License
