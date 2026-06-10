@@ -1,7 +1,7 @@
 services:
   mc:
     image: itzg/minecraft-server:java21
-    container_name: derpack-x-mc
+    container_name: pcmc-mc
     tty: true
     stdin_open: true
     ports:
@@ -41,7 +41,7 @@ services:
       - OPS=${OPS}
 
       # RCON - internal only; not exposed to the host. auto-update.sh uses it via
-      # `docker exec derpack-x-mc rcon-cli` to warn players and flush the world.
+      # `docker exec pcmc-mc rcon-cli` to warn players and flush the world.
       - ENABLE_RCON=true
       - RCON_PASSWORD=${RCON_PASSWORD}
     volumes:

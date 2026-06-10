@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Derpack X server auto-update.
+# Project Commonwealth server auto-update.
 #
 # WHAT CHANGED AND WHY
 # --------------------
@@ -34,7 +34,7 @@
 #   branch   - track the tip of BRANCH_REF, e.g. v0.7.0 (dev / playtest)
 #
 # CRON - frequent is fine; it's a no-op unless the tracked commit moved:
-#   */15 * * * * /path/to/derpack-server/auto-update.sh >> /path/to/derpack-server/auto-update.log 2>&1
+#   */15 * * * * /path/to/pcmc-server/auto-update.sh >> /path/to/pcmc-server/auto-update.log 2>&1
 #
 # MANUAL
 #   ./auto-update.sh [--now] [--channel release|branch] [--branch <name>]
@@ -50,7 +50,7 @@ set -euo pipefail
 
 # --- Static config ----------------------------------------------------------
 
-readonly REPO="derpack-org/Derpack-X"          # the Derpack X pack repo this server tracks
+readonly REPO="theasshats/project-commonwealth"   # the Project Commonwealth pack repo this server tracks
 
 # PACK_DIR is this script's own checkout, resolved from its location - so the
 # script reads .env, the lock and the pause flag, and runs compose, from
@@ -61,7 +61,7 @@ readonly PACK_DIR
 readonly ENV_FILE="${PACK_DIR}/.env"
 readonly PAUSE_FILE="${PACK_DIR}/.pause-auto-update"
 readonly LOCK_FILE="${PACK_DIR}/.auto-update.lock"
-readonly CONTAINER_NAME="derpack-x-mc"
+readonly CONTAINER_NAME="pcmc-mc"
 
 # Player-warning cadence before a restart.
 # Format "label-shown-to-players:seconds-to-wait-after-announcing".
@@ -185,7 +185,7 @@ done
 
 # --- Main -------------------------------------------------------------------
 
-log "=== Derpack X auto-update run ==="
+log "=== Project Commonwealth auto-update run ==="
 
 if [[ -f "$PAUSE_FILE" ]]; then
     log "Paused ($PAUSE_FILE exists). Skipping."
@@ -259,14 +259,14 @@ log "Update available: $TRACK_LABEL -> commit ${TARGET_SHA:0:12} (pack ${NEW_VER
 if container_running; then
     if [[ "$FORCE_NOW" == "true" ]]; then
         log "--now set: skipping the warning countdown."
-        rcon "say [Derpack X] Server updating to ${NEW_VERSION:-new build} now."
+        rcon "say [Project Commonwealth] Server updating to ${NEW_VERSION:-new build} now."
         rcon "save-all"; sleep 5
     else
         log "Warning players over ~10 minutes (use --now to skip)."
         for entry in "${WARNINGS[@]}"; do
             label="${entry%%:*}"; wait="${entry##*:}"
             log "  T-${label}: announcing"
-            rcon "say [Derpack X] Server restarting for update (${NEW_VERSION:-new build}) in ${label}."
+            rcon "say [Project Commonwealth] Server restarting for update (${NEW_VERSION:-new build}) in ${label}."
             sleep "$wait"
         done
         log "Flushing world (save-all)..."
@@ -290,7 +290,7 @@ write_env
 
 if deploy && wait_healthy; then
     log "SUCCESS: healthy on ${NEW_VERSION:-new build} (NeoForge $NEW_NEOFORGE, commit ${TARGET_SHA:0:12})."
-    rcon "say [Derpack X] Update complete - now on ${NEW_VERSION:-the latest build}."
+    rcon "say [Project Commonwealth] Update complete - now on ${NEW_VERSION:-the latest build}."
     rm -f "$BACKUP"
     log "=== Update complete ==="
     exit 0
